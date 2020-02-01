@@ -3,7 +3,7 @@
 <head>
     <title></title>
     <link type="text/css" href="css/default.css" rel="Stylesheet" />
-    <script type="text/javascript" src="scripts/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="scripts/jquery-3.2.1.min.js"></script>
     <script type="text/javascript" src="scripts/messagecenter.js"></script>
     <script type="text/javascript">
 <!--
@@ -13,7 +13,7 @@
                     if(message == 'collapseFrameOnLoad') {
                         setTimeout(function() {
                             $('#maximizePanel').animate({
-                                top:'-' + maxPanelHeight + 'px'
+                                left:'-' + maxPanelWidth + 'px'
                             }, 300);
                         }, 2000);
                     }
@@ -23,7 +23,7 @@
                 if(MOBILE_DEVICE) {
                     $('#maximizePanel').height('45px');
                 }
-                var maxPanelHeight = $('#maximizePanel').height();
+                var maxPanelWidth = $('#maximizePanel').width();
 
                 $('#maximizePanel').click(function () {
                     $(this).removeClass('maximizePanelOver');
@@ -34,17 +34,17 @@
                     $('#maximizePanel').mouseenter(function() {
                         $(this).addClass('maximizePanelOver');
                     });
-                    $('#maximizePanel').mouseout(function() {
+                    $('#maximizePanel').mouseleave(function() {
                         if($(this).hasClass('maximizePanelOver')) {
                             $(this).animate({
-                                top:'-' + maxPanelHeight + 'px'
+                                left:'-' + maxPanelWidth + 'px'
                             }, 300);
                         }
                         $(this).removeClass('maximizePanelOver');
                     });
                     $('#maximizePanelOver').mouseenter(function() {
                         $('#maximizePanel').animate({
-                            top:'0px'
+                            left:'0px'
                         }, 100);
                     });
                 }

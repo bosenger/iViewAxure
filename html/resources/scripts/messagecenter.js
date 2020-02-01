@@ -8,10 +8,13 @@ var CHROME = false;
 var SAFARI = false;
 var FIREFOX = false;
 var WEBKIT = false;
+var QQ = false;
+var UC = false;
 var OS_MAC = false;
 var IOS = false;
 var ANDROID = false;
 var MOBILE_DEVICE = false;
+var SHARE_APP = false;
 
 var IE = false;
 var IE_10_AND_BELOW = false;  //ie 10 and lower
@@ -21,31 +24,6 @@ var BROWSER_VERSION = 5000;
     if(!window.$axure) window.$axure = function() {};
     var useragent = window.navigator.userAgent;
 
-    var edgeRegex = /Edge\/([0-9]+)/g;
-    var edgeMatch = edgeRegex.exec(useragent);
-    $axure.browser = { isEdge: Boolean(edgeMatch) };
-
-    if(!$axure.browser.isEdge) {
-        var chromeRegex = /Chrome\/([0-9]+).([0-9]+)/g;
-        var chromeMatch = chromeRegex.exec(useragent);
-        CHROME = Boolean(chromeMatch);
-        CHROME_5_LOCAL = chromeMatch &&
-            Number(chromeMatch[1]) >= 5 &&
-            location.href.indexOf('file://') >= 0;
-    }
-
-    var safariRegex = /Safari\/([0-9]+)/g;
-    var safariMatch = safariRegex.exec(useragent);
-    SAFARI = Boolean(safariMatch) && !CHROME; //because chrome also inserts safari string into user agent
-
-    var webkitRegex = /WebKit\//g ;
-    WEBKIT = Boolean(webkitRegex.exec(useragent));
-
-    FIREFOX = useragent.toLowerCase().indexOf('firefox') > -1;
-
-    var macRegex = /Mac/g ;
-    OS_MAC = Boolean(macRegex.exec(window.navigator.platform));
-
     IOS = useragent.match(/iPhone/i) || useragent.match(/iPad/i) || useragent.match(/iPod/i);
     ANDROID = useragent.match(/Android/i);
 
@@ -54,6 +32,43 @@ var BROWSER_VERSION = 5000;
         || navigator.userAgent.match(/BlackBerry/i)
         || navigator.userAgent.match(/Tablet PC/i)
         || navigator.userAgent.match(/Windows Phone/i);
+
+    var edgeRegex = /Edge\/([0-9]+)/g;
+    var edgeMatch = edgeRegex.exec(useragent);
+    $axure.browser = { isEdge: Boolean(edgeMatch) };
+    if ($axure.browser.isEdge) BROWSER_VERSION = Number(edgeMatch[1]);
+
+    if(!$axure.browser.isEdge) {
+        var chromeRegex = /Chrome\/([0-9]+).([0-9]+)/g;
+        var chromeMatch = chromeRegex.exec(useragent);
+        CHROME = Boolean(chromeMatch);
+        CHROME_5_LOCAL = chromeMatch &&
+            Number(chromeMatch[1]) >= 5 &&
+            location.href.indexOf('file://') >= 0 &&
+            !MOBILE_DEVICE; // Otherwise, Android webview will show up as CHROME_5_LOCAL
+        if (CHROME) BROWSER_VERSION = Number(chromeMatch[1]);
+    }
+
+    var safariRegex = /Safari\/([0-9]+)/g;
+    var safariMatch = safariRegex.exec(useragent);
+    SAFARI = Boolean(safariMatch) && !CHROME && !$axure.browser.isEdge; //because chrome also inserts safari string into user agent
+    if (SAFARI) BROWSER_VERSION = Number(safariMatch[1]);
+
+    var webkitRegex = /WebKit\//g ;
+    WEBKIT = Boolean(webkitRegex.exec(useragent));
+
+    var firefoxRegex = /Firefox\/([0-9]+)/g;
+    var firefoxMatch = firefoxRegex.exec(useragent);
+    FIREFOX = useragent.toLowerCase().indexOf('firefox') > -1;
+    if (FIREFOX) BROWSER_VERSION = Number(firefoxMatch[1]);
+
+    QQ = useragent.toLowerCase().indexOf('qqbrowser') > -1;
+    UC = useragent.toLowerCase().indexOf('ucbrowser') > -1 || useragent.toLowerCase().indexOf('ubrowser') > -1;
+
+    SHARE_APP = useragent.toLowerCase().indexOf('shareapp') > -1;
+
+    var macRegex = /Mac/g ;
+    OS_MAC = Boolean(macRegex.exec(window.navigator.platform));
     
     if($.browser) {
         if($.browser.msie) IE_10_AND_BELOW = true;
@@ -62,7 +77,27 @@ var BROWSER_VERSION = 5000;
         BROWSER_VERSION = $.browser.version;
     }
 
+    IE_11_AND_ABOVE = useragent.toLowerCase().indexOf('trident') > -1;
+    IE_10_AND_BELOW = !IE_11_AND_ABOVE && useragent.toLowerCase().indexOf('msie') > -1;
     IE = IE_10_AND_BELOW || IE_11_AND_ABOVE;
+
+    var _supports = $axure.mobileSupport = {};
+    _supports.touchstart = typeof window.ontouchstart !== 'undefined';
+    _supports.touchmove = typeof window.ontouchmove !== 'undefined';
+    _supports.touchend = typeof window.ontouchend !== 'undefined';
+    _supports.mobile = _supports.touchstart && _supports.touchend && _supports.touchmove;
+
+    if (!MOBILE_DEVICE && _supports.mobile) {
+        _supports.touchstart = false;
+        _supports.touchmove = false;
+        _supports.touchend = false;
+        _supports.mobile = false;
+    }
+
+    var _eventNames = $axure.eventNames = {};
+    _eventNames.mouseDownName = _supports.touchstart ? 'touchstart' : 'mousedown';
+    _eventNames.mouseUpName = _supports.touchend ? 'touchend' : 'mouseup';
+    _eventNames.mouseMoveName = _supports.touchmove ? 'touchmove' : 'mousemove';
 
     //Used by sitemap and variables.js getLinkUrl functions so that they know
     //whether to embed global variables in URL as query string or hash string
@@ -91,6 +126,68 @@ var BROWSER_VERSION = 5000;
     $axure.shouldSendVarsToServer = _shouldSendVarsToServer;
 })();
 
+(function () {
+    var matched, browser;
+
+    // Use of jQuery.browser is frowned upon.
+    // More details: http://api.jquery.com/jQuery.browser
+    // jQuery.uaMatch maintained for back-compat
+    jQuery.uaMatch = function (ua) {
+        ua = ua.toLowerCase();
+
+        var match = /(chrome)[ \/]([\w.]+)/.exec(ua) ||
+            /(webkit)[ \/]([\w.]+)/.exec(ua) ||
+            /(opera)(?:.*version|)[ \/]([\w.]+)/.exec(ua) ||
+            /(msie) ([\w.]+)/.exec(ua) ||
+            ua.indexOf("compatible") < 0 && /(mozilla)(?:.*? rv:([\w.]+)|)/.exec(ua) ||
+            [];
+
+        return {
+            browser: match[1] || "",
+            version: match[2] || "0"
+        };
+    };
+
+    matched = jQuery.uaMatch(navigator.userAgent);
+    browser = {};
+
+    if (matched.browser) {
+        browser[matched.browser] = true;
+        browser.version = matched.version;
+    }
+
+    // Chrome is Webkit, but Webkit is also Safari.
+    if (browser.chrome) {
+        browser.webkit = true;
+    } else if (browser.webkit) {
+        browser.safari = true;
+    }
+
+    jQuery.browser = browser;
+
+    jQuery.sub = function () {
+        function jQuerySub(selector, context) {
+            return new jQuerySub.fn.init(selector, context);
+        }
+        jQuery.extend(true, jQuerySub, this);
+        jQuerySub.superclass = this;
+        jQuerySub.fn = jQuerySub.prototype = this();
+        jQuerySub.fn.constructor = jQuerySub;
+        jQuerySub.sub = this.sub;
+        jQuerySub.fn.init = function init(selector, context) {
+            if (context && context instanceof jQuery && !(context instanceof jQuerySub)) {
+                context = jQuerySub(context);
+            }
+
+            return jQuery.fn.init.call(this, selector, context, rootjQuerySub);
+        };
+        jQuerySub.fn.init.prototype = jQuerySub.fn;
+        var rootjQuerySub = jQuerySub(document);
+        return jQuerySub;
+    };
+
+})();
+
 (function() {
     var _topMessageCenter;
     var _messageCenter = {};
@@ -106,40 +203,44 @@ var BROWSER_VERSION = 5000;
     var _childrenMessageCenters = [];
 
     // create $axure if it hasn't been created
-    if (!window.$axure) window.$axure = function() {};
+    if(!window.$axure) window.$axure = function() {};
     $axure.messageCenter = _messageCenter;
 
     // isolate scope, and initialize _topMessageCenter.
     (function() {
-        if (!CHROME_5_LOCAL) {
+        if(!CHROME_5_LOCAL) {
             var topAxureWindow = window;
             try {
-                while(topAxureWindow.parent && topAxureWindow.parent !== topAxureWindow
-                    && topAxureWindow.parent.$axure) topAxureWindow = topAxureWindow.parent;
-            } catch(e) {}
+                while(topAxureWindow.parent && topAxureWindow.parent !== topAxureWindow && topAxureWindow.parent.$axure)
+                    topAxureWindow = topAxureWindow.parent;
+            } catch(e) {
+            }
             _topMessageCenter = topAxureWindow.$axure.messageCenter;
         }
     })();
 
-    $(window.document).ready(function() {
-        if (CHROME_5_LOCAL) {
+    if (CHROME_5_LOCAL) {
+        document.addEventListener("DOMContentLoaded", function () {
             $('body').append("<div id='axureEventReceiverDiv' style='display:none'></div>" +
                 "<div id='axureEventSenderDiv' style='display:none'></div>");
 
-		    _eventObject = window.document.createEvent('Event');
-		    _eventObject.initEvent('axureMessageSenderEvent', true, true);            
-            
-            $('#axureEventReceiverDiv').bind('axureMessageReceiverEvent', function () {
-                var request = JSON.parse($(this).text());
-                _handleRequest(request);
-            });
-        } else {
+            _eventObject = window.document.createEvent('Event');
+            _eventObject.initEvent('axureMessageSenderEvent', true, true);
+
+            $('#axureEventReceiverDiv')[0].addEventListener('axureMessageReceiverEvent',
+                function () {
+                    var request = JSON.parse($(this).text());
+                    _handleRequest(request);
+                });
+        });
+    } else {
+        $(window.document).ready(function () {
             if (_topMessageCenter != _messageCenter) {
                 _topMessageCenter.addChildMessageCenter(_messageCenter);
                 console.log('adding from ' + window.location.toString());
             }
-        }
-    });
+        });
+    }
 
     var _handleRequest = function (request) {
         // route the request to all the listeners

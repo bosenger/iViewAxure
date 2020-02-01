@@ -130,7 +130,8 @@ $.fn.splitter = function(args){
       // Focuser element, provides keyboard support; title is shown by Opera accessKeys
       var focuser = $('<a href="javascript:void(0)"></a>')
          .attr({accessKey: opts.accessKey, tabIndex: opts.tabIndex, title: opts.splitbarClass})
-         .bind($.browser.opera?"click":"focus", function(){ this.focus(); bar.addClass(opts.activeClass) })
+         //.bind($.browser.opera?"click":"focus", function(){ this.focus(); bar.addClass(opts.activeClass) })
+         .bind("focus", function () { this.focus(); bar.addClass(opts.activeClass) })
          .bind("keydown", function(e){
             var key = e.which || e.keyCode;
             var dir = key==opts["key"+opts.side1]? 1 : key==opts["key"+opts.side2]? -1 : 0;

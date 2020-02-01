@@ -1,103 +1,89 @@
 ﻿#pageNotesHost {
-    font-size: 12px;
-    color:#4a4a4a;
+    display: flex;
+    flex-direction: column;
     height: 100%;
 }
 
-#pageNotesHostBtn a {
-    background: url('images/notes_on.png');
-    background: url('images/notes_on.svg'),linear-gradient(transparent, transparent);
+#pageNotesHostBtn {
+    order: 2;
 }
 
-.hashover #pageNotesHostBtn a:hover {
-    background: url('images/notes_hover.png');
-    background: url('images/notes_hover.svg'),linear-gradient(transparent, transparent);
+#pageNotesHostBtn a {
+    background: url('images/notes_panel_on.svg') no-repeat center center,linear-gradient(transparent, transparent);
 }
 
 #pageNotesHostBtn a.selected, #pageNotesHostBtn a.selected:hover {
-    background: url('images/notes_off.png');
-    background: url('images/notes_off.svg'),linear-gradient(transparent, transparent);
+    background: url('images/notes_panel_off.svg') no-repeat center center,linear-gradient(transparent, transparent);
 }
 
-#footnotesButton {
-    background: url('images/footnotes.png') no-repeat center center;
-    background: url('images/footnotes.svg') no-repeat center center,linear-gradient(transparent, transparent);
-}
-
-#footnotesButton:hover {
-    background: url('images/footnotes_hover.png') no-repeat center center;
-    background: url('images/footnotes_hover.svg') no-repeat center center,linear-gradient(transparent, transparent);
-}
-
-#footnotesButton.sitemapToolbarButtonSelected, #footnotesButton.sitemapToolbarButtonSelected:hover {
-    background: url('images/footnotes_on.png') no-repeat center center;
-    background: url('images/footnotes_on.svg') no-repeat center center,linear-gradient(transparent, transparent);
-}
-
-.nextPageButton {
-    background: url('images/forward.png') no-repeat center center;
-    background: url('images/forward.svg') no-repeat center center,linear-gradient(transparent, transparent);    
-}
-
-.nextPageButton:hover {
-    background: url('images/forward_hover.png') no-repeat center center;
-    background: url('images/forward_hover.svg') no-repeat center center,linear-gradient(transparent, transparent);    
-}
-
-.prevPageButton {
-    background: url('images/back.png') no-repeat center center;
-    background: url('images/back.svg') no-repeat center center,linear-gradient(transparent, transparent);    
-}
-
-.prevPageButton:hover {
-    background: url('images/back_hover.png') no-repeat center center;
-    background: url('images/back_hover.svg') no-repeat center center,linear-gradient(transparent, transparent);    
-}
-
-#pageNotesScrollContainer 
-{
+#pageNotesScrollContainer {
     overflow: auto;
     width: 100%;
-    /*height: 100%;*/
+    flex: 1;
     -webkit-overflow-scrolling: touch;
 }    
 
-#pageNotesContainer 
-{
-    /*padding: 10px 10px 10px 12px;*/
-}
-
-#pageNotesContent 
-{
+#pageNotesContent {
 	overflow: visible;
 }
 
-.pageNoteContainer 
-{
-    padding: 10px;
+.pageNoteContainer {
+    padding: 0px 12px 8px 12px;
 }
 
-.pageNoteName 
-{
-    font-family: 'Trebuchet MS';
-	font-size: 14px;
+.mobileMode .pageNoteContainer {
+    padding: 0px 16px 8px 17px;
+}
+
+.pageNoteName {
+    font-size: 13px;
     font-weight: bold;
-	margin-bottom: 5px;
-	/*text-decoration: underline;*/
-	white-space: nowrap;
+    color: #2c2c2c;
+    margin: 15px 0px 5px 0px;
+    white-space: nowrap;
 }
 
-.pageNote 
-{
-    line-height: 21px;
-	/*margin-bottom: 20px;*/
+.pageNote {
+    font-size: 13px;
+    color: #2a2e38;
+    line-height: 1.67;
+    word-wrap: break-word;
+}
+
+.pageNote ul {
+    list-style: disc;
+    padding: 0px 0px 0px 40px;
+}
+
+.pageNote ul ul{
+    list-style: circle;
+}
+
+.pageNote ul ul ul{
+    list-style: square;
+}
+
+.pageNote ul ul ul ul {
+    list-style: disc;
+}
+
+.pageNote ul ul ul ul ul {
+    list-style: circle;
+}
+
+.pageNote ul ul ul ul ul ul {
+    list-style: square;
 }
 
 .widgetNoteContainer {
-    padding: 10px;
+    padding: 12px;
     border-bottom: 1px solid transparent;
     border-top: 1px solid transparent;
     cursor: pointer;
+}
+
+.mobileMode .widgetNoteContainer {
+    padding: 12px 16px 12px 17px;
 }
 
 .widgetNoteContainerSelected {
@@ -106,30 +92,16 @@
     border-top: 1px solid #c2c2c2;
 }
 
-/*.widgetNoteContainer:hover {
-    background-color: white;
-    //border-bottom: 1px solid #c2c2c2;
-    //border-top: 1px solid #c2c2c2;
-}*/
-
 .widgetNoteFootnote {
     display: inline-block;
-    /*vertical-align: top;
-    margin: 2px 5px 10px 0px;
-    padding: 1px 6px;
-    font-size: 10px;
-    color: #ffffff;
-    background-color: #0a6cd6;*/
-    width: 13px;
-    height: 12px;
     padding-top: 1px;
-    text-align: center;
-    background-color: #138CDD;
-    /*-moz-box-shadow: 1px 1px 3px #aaa;
-    -webkit-box-shadow: 1px 1px 3px #aaa;
-    box-shadow: 1px 1px 3px #aaa;*/
-    font-size: 0px;
+    background-color: #fff849;
+    font-size: 11px;
+    font-weight: bold;
+    line-height: 16px;
     margin-right: 8px;
+    padding: 0px 5px;
+    color: #000;
 }
 
 div.annnoteline {
@@ -141,12 +113,11 @@ div.annnoteline {
 }
 
 .widgetNoteLabel {
-    display: inline-block;
-    vertical-align: top;
-    font-family: 'Trebuchet MS';
-	font-size: 14px;
-    font-weight: bold;
-	margin-bottom: 5px;    
+    font-size: 13px;
+    font-weight: 600;
+    color: #58167d;
+    margin-top: 4px;
+    float: right;
 }
 
 .noteLink {
@@ -156,4 +127,83 @@ div.annnoteline {
 
 .noteLink:hover {
     background-color: white;
+}
+
+.notesSectionHeader {
+    margin: 0px 8px 0px 12px;
+}
+
+.notesPageNameHeader {
+    margin: 8px 8px 15px 12px;
+}
+
+.mobileMode .notesPageNameHeader {
+    margin: 18px 14px 5px 16px;
+}
+
+#notesOverlay {
+    width: 0;
+    height: 0;
+    position: absolute;
+    overflow: visible;
+    z-index: 1;
+}
+
+div.closeNotesDialog {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 11px;
+    height: 10px;
+    object-fit: contain;
+    background: url(../../../resources/images/close_x.svg) no-repeat center center, linear-gradient(transparent, transparent);
+    margin-left: auto;
+    cursor: pointer;
+}
+
+div.resizeNotesDialog {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 11px;
+    height: 10px;
+    object-fit: contain;
+    background: url(../../../resources/images/resize.svg) no-repeat center center, linear-gradient(transparent, transparent);
+    margin-left: auto;
+    cursor: nwse-resize;
+}
+
+div.notesDialog {
+    position: absolute;
+    padding: 16px 3px 10px 3px;
+    background-color: #efefef;
+    width: 300px;
+    height: 300px;
+    line-height: normal;
+    border: #8F949A solid 1px;
+    box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.4);
+    cursor: move;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+div.notesDialog.active {
+    user-select: none;
+}
+
+div.notesDialog .widgetNoteContainer {
+    cursor: auto;
+    padding: 2px 26px 16px 14px;
+}
+
+div.notesDialogScroll {
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: 100%;
+    cursor: auto;
+}
+
+.mobileMode .pageNoteName, .mobileMode #pageNotesToolbar, .mobileMode .dottedDivider {
+    display: none;
 }
